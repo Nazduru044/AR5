@@ -1,1 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Istanbul Fethi AR - Final</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        #start-button {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            padding: 20px 40px; background: #c0392b; color: white;
+            border: none; border-radius: 50px; font-weight: bold; z-index: 9999;
+            cursor: pointer; font-family: sans-serif; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
 
+    <button id="start-button">DENEYİMİ BAŞLAT ⚔️</button>
+
+    <a-scene mindar-image="imageTargetSrc: targets.mind; uiLoading: no;" 
+             color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" 
+             vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+
+        <a-assets>
+            <video id="fethi-v" src="video.mp4" 
+                   preload="auto" loop="true" crossorigin="anonymous" 
+                   playsinline webkit-playsinline></video>
+            
+            <audio id="fethi-a" src="muzik.mp3" preload="auto" loop="true"></audio>
+        </a-assets>
+
+        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+        <a-entity mindar-image-target="targetIndex: 0">
+            <a-video src="#fethi-v" width="1" height="0.56" position="0 0 0" material="shader: flat; transparent: false;"></a-video>
+        </a-entity>
+    </a-scene>
+
+    <script>
+        const video = document.querySelector('#fethi-v');
+        const audio = document.querySelector('#fethi-a');
+        const btn = document.querySelector('#start-button');
+
+        btn.addEventListener('click', () => {
+            // Başlat butonuna basıldığında tarayıcı izni alınır
+            video.play().then(() => {
+                video.pause(); // Sadece kilidi açmak için kısa bir oynat-dur
+                if(audio) { audio.play(); audio.pause(); }
+                video.muted = false;
+                btn.style.display = "none";
+                console.log("Sistem hazır.");
+            });
+        });
+
+        const targetEntity = document.querySelector('[mindar-image-target]');
+        
+        targetEntity.addEventListener("targetFound", () => {
+            video.play();
+            if(audio) audio.play();
+        });
+
+        targetEntity.addEventListener("targetLost", () => {
+            video.pause();
+            if(audio) audio.pause();
+        });
+    </script>
+</body>
+</html>
